@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111827">
+  <meta name="description" content="A simple, personal movie watchlist to track what you want to watch and what you've already seen.">
+  <title>Movie Watchlist</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="Movie Watchlist home">
+      <span class="brand-mark" aria-hidden="true">▶</span>
+      <span>Movie<span class="brand-light">Watchlist</span></span>
+    </a>
+    <span class="header-note">Your next great movie night starts here.</span>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">YOUR PERSONAL CINEMA</p>
+        <h1>Keep every story<br><span>on your list.</span></h1>
+        <p class="hero-copy">Save movies for later, keep track of what you've watched, and rate your favourites.</p>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="ticket ticket-back">✦</div>
+        <div class="ticket ticket-front"><span>NOW<br>SHOWING</span><b>▶</b></div>
+        <span class="spark spark-one">✦</span><span class="spark spark-two">✧</span>
+      </div>
+    </section>
+
+    <section class="stats" aria-label="Watchlist summary">
+      <article class="stat-card"><span class="stat-icon">▣</span><div><span class="stat-label">Total movies</span><strong id="total-count">—</strong></div></article>
+      <article class="stat-card"><span class="stat-icon">◷</span><div><span class="stat-label">To watch</span><strong id="planned-count">—</strong></div></article>
+      <article class="stat-card"><span class="stat-icon">✓</span><div><span class="stat-label">Watched</span><strong id="watched-count">—</strong></div></article>
+      <article class="stat-card"><span class="stat-icon">★</span><div><span class="stat-label">Rated movies</span><strong id="rated-count">—</strong></div></article>
+    </section>
+
+    <section class="toolbar" aria-label="Search and filter movies">
+      <div class="search-wrap"><span aria-hidden="true">⌕</span><label class="sr-only" for="search">Search movies</label><input id="search" type="search" placeholder="Search title, director, or genre…"></div>
+      <label class="sr-only" for="status-filter">Filter by status</label>
+      <select id="status-filter">
+        <option value="all">All statuses</option><option value="planned">Want to watch</option><option value="watching">Watching</option><option value="watched">Watched</option>
+      </select>
+      <label class="sr-only" for="genre-filter">Filter by genre</label>
+      <select id="genre-filter"><option value="all">All genres</option></select>
+      <button class="button button-primary" id="add-movie-button" type="button"><span>＋</span> Add a movie</button>
+    </section>
+
+    <section class="list-heading">
+      <div><h2>Your collection</h2><p id="results-caption">Loading your movies…</p></div>
+      <label class="sort-control" for="sort-by">Sort by
+        <select id="sort-by"><option value="recent">Recently added</option><option value="title">Title A–Z</option><option value="year">Release year</option><option value="rating">Your rating</option></select>
+      </label>
+    </section>
+
+    <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+    <section id="movie-grid" class="movie-grid" aria-label="Your movies"></section>
+    <section id="empty-state" class="empty-state" hidden>
+      <div class="empty-icon">▣</div><h3 id="empty-title">Your watchlist is a blank screen.</h3>
+      <p id="empty-copy">Add a movie you want to watch and start building your collection.</p>
+      <button class="button button-primary" id="empty-add-button" type="button">＋ Add your first movie</button>
+    </section>
+    <p class="footer-note">Made for movie lovers <span>✦</span> Your list is stored in your connected database.</p>
+  </main>
+
+  <dialog id="movie-dialog" class="movie-dialog">
+    <form id="movie-form" novalidate>
+      <div class="dialog-heading"><div><p class="eyebrow">YOUR COLLECTION</p><h2 id="dialog-title">Add a movie</h2></div><button type="button" class="icon-button" id="close-dialog" aria-label="Close dialog">×</button></div>
+      <input type="hidden" id="movie-id">
+      <div class="form-grid">
+        <div class="field field-full"><label for="title">Movie title <span>*</span></label><input id="title" name="title" maxlength="120" required placeholder="e.g. The Grand Budapest Hotel"><small class="field-error" id="title-error"></small></div>
+        <div class="field"><label for="director">Director</label><input id="director" name="director" maxlength="100" placeholder="e.g. Wes Anderson"></div>
+        <div class="field"><label for="release-year">Release year</label><input id="release-year" name="release_year" type="number" min="1888" max="2100" placeholder="e.g. 2014"></div>
+        <div class="field"><label for="genre">Genre</label><select id="genre" name="genre"><option value="">Choose a genre</option><option>Action</option><option>Adventure</option><option>Animation</option><option>Comedy</option><option>Crime</option><option>Documentary</option><option>Drama</option><option>Fantasy</option><option>Horror</option><option>Mystery</option><option>Romance</option><option>Sci-Fi</option><option>Thriller</option><option>Other</option></select></div>
+        <div class="field"><label for="status">Status</label><select id="status" name="status"><option value="planned">Want to watch</option><option value="watching">Watching</option><option value="watched">Watched</option></select></div>
+        <div class="field"><label for="rating">Your rating</label><select id="rating" name="rating"><option value="">Not rated</option><option value="1">★☆☆☆☆ — 1/5</option><option value="2">★★☆☆☆ — 2/5</option><option value="3">★★★☆☆ — 3/5</option><option value="4">★★★★☆ — 4/5</option><option value="5">★★★★★ — 5/5</option></select></div>
+        <div class="field"><label for="watched-date">Date watched</label><input id="watched-date" name="watched_date" type="date"></div>
+        <div class="field field-full"><label for="notes">Notes</label><textarea id="notes" name="notes" maxlength="1000" rows="3" placeholder="What do you want to remember about this movie?"></textarea></div>
+      </div>
+      <p class="form-hint">Fields marked * are required. Your rating and date watched are optional.</p>
+      <div class="dialog-actions"><button type="button" class="button button-secondary" id="cancel-dialog">Cancel</button><button type="submit" class="button button-primary" id="save-button">Save movie</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="confirm-dialog" class="confirm-dialog">
+    <div class="confirm-content"><div class="confirm-symbol">!</div><h2>Remove this movie?</h2><p>This will permanently remove it from your watchlist.</p><div class="dialog-actions"><button class="button button-secondary" id="keep-movie" type="button">Keep movie</button><button class="button button-danger" id="confirm-delete" type="button">Remove movie</button></div></div>
+  </dialog>
+</body>
+</html>
